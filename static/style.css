@@ -1,0 +1,7 @@
+.navbar-wrapper {
+    max-width: 1520px;
+}
+
+li.nav-item {
+    padding: 5px !important;
+}
