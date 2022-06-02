@@ -25,3 +25,52 @@ class LoginTests(TestCase):
         User.objects.create_user(username, 'bbaggins@theshire.com', password)
         response = self.client.post(reverse("user:login"), {'username': username, 'password': password}, follow=True)
         self.assertContains(response, username)
+
+
+class RegistrationTests(TestCase):
+    def test_registration_view_loads(self):
+        response = self.client.get(reverse('user:registration'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_logged_in_user_redirected(self):
+        # Create test user
+        username = "reg_redirect_test_user"
+        password = "password"
+        User.objects.create_user(username, "email@example.com", password)
+        # Log in test user
+        self.client.post(reverse("user:login"), {'username': username, 'password': password})
+        # Test redirect
+        response = self.client.get(reverse('user:registration'))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("user:profile"))
+
+    def test_no_info_register(self):
+        response = self.client.post(reverse("user:registration"))
+        self.assertContains(response, "This field is required.")
+
+    def test_missing_field_register(self):
+        response = self.client.post(reverse("user:registration"), {
+            'username': "test_username",
+            'password1': "test_password",
+            'password2': "test_password",
+        })
+        self.assertContains(response, 'This field is required.')
+
+    def test_invalid_field_register(self):
+        response = self.client.post(reverse("user:registration"), {
+            'username': "test_username",
+            'password1': "test_password",
+            'password2': "test_password",
+            'email': "!",
+        })
+        self.assertContains(response, "Enter a valid email address.")
+
+    def test_valid_register(self):
+        response = self.client.post(reverse("user:registration"), {
+            'username': "test_username",
+            'password1': "test_password",
+            'password2': "test_password",
+            'email': "email@example.com",
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("user:profile"))
