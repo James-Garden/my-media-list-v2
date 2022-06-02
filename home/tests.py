@@ -15,7 +15,7 @@ class HomeIndexViewTests(TestCase):
         email = "jbaggins@test.com"
         password = "password"
         User.objects.create_user(username=username, email=email, password=password)
-        response = self.client.post('/login/', {'username': username, 'password': password})
-        self.assertEquals(response.status_code, 200)
+        response = self.client.post(reverse("user:login"), {'username': username, 'password': password})
+        self.assertEquals(response.status_code, 302)
         response = self.client.get('/')
         self.assertContains(response, username)
