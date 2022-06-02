@@ -51,7 +51,7 @@
                             <a class="nav-link dropdown-toggle btn btn-dark text-white" role="button" data-bs-toggle="dropdown">{{ user.username }}</a>
                             <ul class="dropdown-menu dropdown-menu-dark">
                                 <li>
-                                    <a class="dropdown-item" href="#"><i class="bi bi-person"></i> Profile</a>
+                                    <a class="dropdown-item" href="{% url 'user:profile' %}"><i class="bi bi-person"></i> Profile</a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href="#"><i class="bi bi-people"></i> Friends</a>
@@ -60,7 +60,7 @@
                                     <a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Settings</a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                                    <a class="dropdown-item" href="{% url 'user:logout' %}"><i class="bi bi-box-arrow-right"></i> Logout</a>
                                 </li>
                             </ul>
                         </li>
@@ -71,10 +71,10 @@
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link btn btn-dark text-light" href="#">Log In</a>
+                            <a class="nav-link btn btn-dark text-light" href="{% url 'user:login' %}">Log In</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-light text-dark" href="#">Sign Up</a>
+                            <a class="nav-link btn btn-light text-dark" href="{% url 'user:registration' %}">Sign Up</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -83,12 +83,40 @@
     </header>
 
     <main>
-        <div class="container">
+        <div class="container pt-5">
+        {% block alerts %}
+            {% if messages %}
+                <div class="messages">
+                {% for message in messages %}
+                    {% autoescape off %}{{ message }}{% endautoescape %}
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endblock %}
         {% block content %}
             <!-- This message should not show on any user-accessible pages -->
             <h1>base.html</h1>
-            <p>Replace this by inserting a {% templatetag openblock %} block content {% templatetag closeblock %}
-                into your template file!</p>
+            <p>
+                Replace this by inserting a
+                <code>{% templatetag openblock %} block content {% templatetag closeblock %}</code>
+                into your template file!
+            </p>
+            <br>
+            <p>Other blocks included in this file: </p>
+            <ul>
+                <li>
+                    <code>{% templatetag openblock %} block title {% templatetag closeblock %}</code>, for setting
+                    the <code> &lt;title&gt; </code> of this page
+                </li>
+                <li>
+                    <code>{% templatetag openblock %} block extrahead {% templatetag closeblock %}</code>, for adding
+                    more code to the <code> &lt;head&gt; </code> block
+                </li>
+                <li>
+                    <code>{% templatetag openblock %} block alerts {% templatetag closeblock %}</code> which by
+                    default shows errors to be displayed
+                </li>
+            </ul>
         {% endblock %}
     </div>
     </main>
