@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from re import match
-from datetime import date, timedelta, datetime
+from datetime import timedelta, datetime
 
 
 class LoginForm(LoginView):
@@ -25,12 +25,12 @@ def register(request):
         form_valid = form.is_valid()  # form.is_valid must be run to get form.cleaned_data
         username = form.cleaned_data.get('username')
         birth_date = form.cleaned_data.get('birth_date')
-        valid_birth_date = date.today() - timedelta(weeks=676)
+        valid_birth_date = datetime.now().date() - timedelta(days=4745)
         if not match(r"^[A-Z][\w_]+$", str(username)):
             notice(request, "danger", "Username must start with a capital letter and be alphanumeric.")
         elif birth_date is None:
             notice(request, "danger", "Invalid input.")
-        elif not (birth_date < valid_birth_date):
+        elif birth_date > valid_birth_date:
             notice(request, "danger", "You must be at least 13 years old.")
         elif form_valid:
             user = form.save()
