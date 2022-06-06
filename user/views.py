@@ -26,15 +26,15 @@ def register(request):
         username = form.cleaned_data.get('username')
         birth_date = form.cleaned_data.get('birth_date')
         valid_birth_date = date.today() - timedelta(weeks=676)
-        print(f"Birth Date: {birth_date}")
-        print(f"Minimum Valid Date: {valid_birth_date}")
-        if not match(r"^[A-Z][\w_]+$", username):
+        if not match(r"^[A-Z][\w_]+$", str(username)):
             notice(request, "danger", "Username must start with a capital letter and be alphanumeric.")
+        elif birth_date is None:
+            notice(request, "danger", "Invalid input.")
         elif not (birth_date < valid_birth_date):
             notice(request, "danger", "You must be at least 13 years old.")
         elif form_valid:
             user = form.save()
-            user.refresh_form_db()
+            user.refresh_from_db()
             user.profile.birth_date = form.cleaned_data.get('birth_date')
             user.save()
             raw_password = form.cleaned_data.get('password1')
