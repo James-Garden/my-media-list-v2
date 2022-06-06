@@ -19,8 +19,8 @@
     <form method="post" action="{% url 'user:registration' %}">
         {% csrf_token %}
         <div class="mb-3">
-            <label for="id_username" class="form-label">Email
-                <input id="id_username" type="email" name="email" autofocus="" autocapitalize="none" autocomplete="off" maxlength="150" required class="form-control">
+            <label for="id_email" class="form-label">Email
+                <input id="id_email" type="email" name="email" autofocus="" autocapitalize="none" autocomplete="off" maxlength="150" required class="form-control">
             </label>
         </div>
         <div class="mb-3">
@@ -29,14 +29,18 @@
             </label>
         </div>
         <div class="mb-3">
-            <label for="id_password" class="form-label">Password
+            <label for="id_password1" class="form-label">Password
                 <input id="id_password1" type="password" name="password1" autocomplete="off" required class="form-control">
             </label>
         </div>
         <div class="mb-3">
-            <label for="id_password" class="form-label">Password
+            <label for="id_password2" class="form-label">Password
                 <input id="id_password2" type="password" name="password2" autocomplete="off" required class="form-control">
             </label>
+        </div>
+        <div class="mb-3">
+            <label for="id_date">Date of Birth</label>
+            <input id="id_date" type="date" name="birth_date" autocomplete="off" required class="form-control">
         </div>
         <button type="submit" class="btn btn-outline-dark mb-5">Sign Up</button>
         <input type="hidden" name="next" value="{{ next }}">

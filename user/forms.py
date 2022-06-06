@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(max_length=255)
+    birth_date = forms.DateField(help_text='Required. Format: DD/MM/YYYY', )
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ('username', 'email', 'password1', 'password2', 'birth_date')
