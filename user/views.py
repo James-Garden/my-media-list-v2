@@ -25,7 +25,9 @@ def register(request):
         form_valid = form.is_valid()  # form.is_valid must be run to get form.cleaned_data
         username = form.cleaned_data.get('username')
         birth_date = form.cleaned_data.get('birth_date')
-        valid_birth_date = datetime.now().date() - timedelta(days=4745)
+        valid_birth_date = datetime.now()
+        valid_birth_date = valid_birth_date.replace(year=valid_birth_date.year-13).date()
+        print(valid_birth_date)
         if not match(r"^[A-Z][\w_]+$", str(username)):
             notice(request, "danger", "Username must start with a capital letter and be alphanumeric.")
         elif birth_date is None:

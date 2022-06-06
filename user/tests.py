@@ -103,24 +103,29 @@ class RegistrationTests(TestCase):
 
     def test_dob_thirteen_years(self):
         # Someone who has just turned 13 should be allowed to register
+        dob = datetime.now().date()
+        dob = dob.replace(year=(dob.year - 13))
         response = self.client.post(reverse("user:registration"), {
             'username': "Test_username",
             'password1': "test_password",
             'password2': "test_password",
             'email': "email@example.com",
-            'birth_date': datetime.strftime(datetime.now() - timedelta(days=4745), "%d/%m/%Y"),
+            'birth_date': dob,
         })
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("user:profile"))
 
     def test_dob_not_thirteen_years(self):
         # Someone who has just turned 13 should be allowed to register
+        dob = datetime.now().date()
+        dob.replace(year=dob.year - 13, day=dob.day - 1)
+        dob.replace(year=dob.day - 1)
         response = self.client.post(reverse("user:registration"), {
             'username': "Test_username",
             'password1': "test_password",
             'password2': "test_password",
             'email': "email@example.com",
-            'birth_date': datetime.strftime(datetime.now() - timedelta(days=4744), "%d/%m/%Y"),
+            'birth_date': dob,
         })
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "You must be at least 13 years old.")
