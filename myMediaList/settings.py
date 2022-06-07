@@ -80,12 +80,25 @@ WSGI_APPLICATION = 'myMediaList.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'd8v81hra9dhc27',
+            'USER': 'vhrctyosqhajyl',
+            'PASSWORD': 'd9acdba8b895d622521795f29163b1fc742b57bbef0098a40f42d5049659db13',
+            'HOST': 'ec2-99-80-170-190.eu-west-1.compute.amazonaws.com',
+            'PORT': '5432',
+        }
+    }
 
 
 # Password validation
