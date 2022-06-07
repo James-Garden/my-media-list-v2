@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
-from datetime import datetime, timedelta
+from datetime import datetime, date
 
 
 class LoginTests(TestCase):
@@ -129,3 +129,67 @@ class RegistrationTests(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "You must be at least 13 years old.")
+
+
+class ProfileModelTests(TestCase):
+    @staticmethod
+    def create_valid_user():
+        username = "Bilbo"
+        password = "swaggins"
+        return User.objects.create_user(username, 'bbaggins@theshire.com', password)
+
+    def test_user_has_profile(self):
+        user = self.create_valid_user()
+        self.assertNotEqual(user.profile.user, None)
+
+    def test_save_profile(self):
+        user = self.create_valid_user()
+        user.profile.bio = "Hello, my name is Darren."
+        user.save()
+        self.assertEqual(user.profile.bio, "Hello, my name is Darren.")
+
+    def test_set_gender(self):
+        user = self.create_valid_user()
+        user.profile.gender = user.profile.Gender.FEMALE
+        user.save()
+        self.assertEqual(user.profile.gender, "F")
+
+    def test_set_dob_privacy(self):
+        user = self.create_valid_user()
+        user.profile.birth_date_privacy = "PA"
+        user.save()
+        self.assertEqual(user.profile.birth_date_privacy, "PA")
+
+    def test_get_links(self):
+        user = self.create_valid_user()
+        user.profile.links = '''This is line 1
+And this is line 2'''
+        user.save()
+        self.assertEqual(user.profile.get_links(), ["This is line 1", "And this is line 2"])
+
+    def test_get_dob_private(self):
+        user = self.create_valid_user()
+        user.profile.birth_date = date(2002, 8, 3)
+        user.save()
+        self.assertFalse(user.profile.get_dob())
+
+    def test_get_dob_public(self):
+        user = self.create_valid_user()
+        user.profile.birth_date = date(2002, 8, 3)
+        user.profile.birth_date_privacy = "PA"
+        user.save()
+        self.assertEqual(user.profile.get_dob(), "03 Aug 2002")
+
+    def test_get_dob_year(self):
+        user = self.create_valid_user()
+        user.profile.birth_date = date(2002, 8, 3)
+        user.profile.birth_date_privacy = "PY"
+        user.save()
+        self.assertEqual(user.profile.get_dob(), "2002")
+
+    def test_get_dob_year_month(self):
+        user = self.create_valid_user()
+        user.profile.birth_date = date(2002, 8, 3)
+        user.profile.birth_date_privacy = "PM"
+        user.save()
+        self.assertEqual(user.profile.get_dob(), "Aug 2002")
