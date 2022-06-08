@@ -1,3 +1,4 @@
+from utils.validators import validate_age
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
@@ -20,7 +21,7 @@ class Profile(models.Model):
         NOT_SPECIFIED = 'P', _('Not Specified')
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    birth_date = models.DateField(null=True, blank=True)
+    birth_date = models.DateField(null=True, blank=True, validators=[validate_age])
     birth_date_privacy = models.CharField(
         max_length=2,
         choices=BirthDatePrivacy.choices,
@@ -31,7 +32,7 @@ class Profile(models.Model):
         choices=Gender.choices,
         default=Gender.NOT_SPECIFIED
     )
-    avatar_url = models.URLField(null=True, blank=True)
+    avatar = models.ImageField(null=True, blank=True, upload_to='avatars')
     location = models.CharField(null=True, blank=True, max_length=200)
     bio = models.TextField(null=True, blank=True)
     links = models.TextField(null=True, blank=True)
