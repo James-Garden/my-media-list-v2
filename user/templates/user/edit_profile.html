@@ -1,9 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'settings.html' %}
 
 {% block title %}Edit Profile{% endblock %}
 
 {% block content %}
-    <h1 class="display-2 mb-5">Edit Profile</h1>
+    {{ block.super }}
     <form action="{% url "user:edit_profile" %}" method="post">
         {% csrf_token %}
         <table class="table">
@@ -41,15 +41,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Links</td>
-                    <td colspan="2">
-                        {{ form.links }}
-                    </td>
-                </tr>
-                <tr>
                     <td>Biography</td>
                     <td colspan="2">
                         {{ form.bio }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Links</td>
+                    <td colspan="2">
+                        {{ form.links }}
                     </td>
                 </tr>
                 <tr>
