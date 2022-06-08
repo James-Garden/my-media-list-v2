@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{% static "style.css" %}">
     <link rel="icon" type="image/x-icon" href="{% static "favicon.ico" %}">
     <title>{% block title %}{% endblock %}</title>
-    {% block extrahead %}{% endblock %}
+    {% block extra-head %}{% endblock %}
 </head>
 <body>
     <header>
@@ -19,15 +19,17 @@
                 <a class="navbar-brand" href="/">My Media List</a>
                 <ul class="nav justify-content-end">
                     <li class="nav-item">
+                        <label for="id_search_type" hidden></label>
+                        <label for="id_search_input" hidden></label>
                         <form action="/" method="get">
                             <div class="input-group">
-                                <select class="form-select-sm btn btn-dark p-0">
+                                <select id="id_search_type" class="form-select-sm btn btn-dark p-0">
                                     <option selected value="all">All</option>
                                     <option value="books">Books</option>
                                     <option value="films">Films</option>
                                     <option value="tv">TV Series</option>
                                 </select>
-                                <input type="text" class="form-control bg-dark text-white border-dark" placeholder="Search..." aria-describedby="search-button-addon" name="query" style="min-width: 300px">
+                                <input id="id_search_input" type="text" class="form-control bg-dark text-white border-dark" placeholder="Search..." aria-describedby="search-button-addon" name="query" style="min-width: 300px" autocomplete="off">
                                 <button type="submit" id="search-button-addon" class="btn btn-dark"><i class="bi bi-search"></i></button>
                             </div>
                         </form>
@@ -119,7 +121,7 @@
                     the <code> &lt;title&gt; </code> of this page
                 </li>
                 <li>
-                    <code>{% templatetag openblock %} block extrahead {% templatetag closeblock %}</code>, for adding
+                    <code>{% templatetag openblock %} block extra-head {% templatetag closeblock %}</code>, for adding
                     more code to the <code> &lt;head&gt; </code> block
                 </li>
                 <li>
