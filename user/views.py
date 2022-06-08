@@ -57,9 +57,21 @@ def profile(request, username=None):
 def edit_profile(request):
     if request.user.is_authenticated:
         current_user = request.user
+        current_user_profile = current_user.profile
     else:
         notice(request, "danger", "You must be logged in to edit your profile!")
         return HttpResponseRedirect(reverse('user:login'))
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, instance=current_user_profile)
+        form.user = current_user
+        if form.is_valid():
+            current_user.profile = form.save()
+            notice(request, "success", "Profile updated successfully")
+            return HttpResponseRedirect(reverse("user:edit_profile"))
+    else:
+        form = EditProfileForm(instance=current_user_profile)
+        form.user = current_user
     return render(request, 'user/edit_profile.html', context={
         'user': current_user,
+        'form': form,
     })
