@@ -69,6 +69,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'myMediaList.context_processors.settings_nav_links'
             ],
         },
     },
@@ -92,10 +93,10 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'd8v81hra9dhc27',
-            'USER': 'vhrctyosqhajyl',
-            'PASSWORD': 'd9acdba8b895d622521795f29163b1fc742b57bbef0098a40f42d5049659db13',
-            'HOST': 'ec2-99-80-170-190.eu-west-1.compute.amazonaws.com',
+            'NAME': os.environ.get('DB_NAME'),
+            'USER': os.environ.get('DB_USER'),
+            'PASSWORD': os.environ.get('DB_PASSWORD'),
+            'HOST': os.environ.get('DB_HOST'),
             'PORT': '5432',
         }
     }
