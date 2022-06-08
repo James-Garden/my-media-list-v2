@@ -75,3 +75,7 @@ def edit_profile(request):
         'user': current_user,
         'form': form,
     })
+
+
+def edit_account(request):
+    return None
