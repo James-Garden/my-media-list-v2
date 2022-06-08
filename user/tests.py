@@ -193,3 +193,62 @@ And this is line 2'''
         user.profile.birth_date_privacy = "PM"
         user.save()
         self.assertEqual(user.profile.get_dob(), "Aug 2002")
+
+
+class EditProfileTests(TestCase):
+    username = "Bilbo"
+    password = "swaggins"
+
+    def create_valid_user(self):
+        user = User.objects.create_user(self.username, 'bbaggins@theshire.com', self.password)
+        user.profile.birth_date = date(2002, 8, 3)
+        user.save()
+        user.refresh_from_db()
+        return user
+
+    def test_change_location(self):
+        user = self.create_valid_user()
+        self.client.post(reverse("user:login"), {'username': self.username, 'password': self.password})
+        response = self.client.post(reverse("user:edit_profile"), {
+            'user': user,
+            'gender': user.profile.gender,
+            'birth_date': user.profile.birth_date,
+            'birth_date_privacy': user.profile.birth_date_privacy,
+            'location': "The Shire",
+            'links': "",
+            'bio': "",
+        }, follow=True)
+        self.assertContains(response, "Profile updated successfully")
+        self.assertContains(response, "The Shire")
+
+    def test_invalid_birth_date(self):
+        user = self.create_valid_user()
+        self.client.post(reverse("user:login"), {'username': self.username, 'password': self.password})
+        response = self.client.post(reverse("user:edit_profile"), {
+            'user': user,
+            'gender': user.profile.gender,
+            'birth_date': date.today(),
+            'birth_date_privacy': user.profile.birth_date_privacy,
+            'location': "",
+            'links': "",
+            'bio': "",
+        }, follow=True)
+
+        self.assertContains(response, "You must be at least 13 years old.")
+        self.assertNotEqual(user.profile.birth_date, date.today())
+
+    def test_invalid_gender(self):
+        user = self.create_valid_user()
+        self.client.post(reverse("user:login"), {'username': self.username, 'password': self.password})
+        response = self.client.post(reverse("user:edit_profile"), {
+            'user': user,
+            'gender': 'X',
+            'birth_date': user.profile.birth_date,
+            'birth_date_privacy': user.profile.birth_date_privacy,
+            'location': "",
+            'links': "",
+            'bio': "",
+        }, follow=True)
+
+        self.assertContains(response, "Select a valid choice. X is not one of the available choices.")
+        self.assertNotEqual(user.profile.gender, 'X')
