@@ -92,6 +92,16 @@
                 {% endfor %}
                 </div>
             {% endif %}
+            {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
         {% endblock %}
         {% block content %}
             <!-- This message should not show on any user-accessible pages -->

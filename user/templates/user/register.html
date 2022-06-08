@@ -1,19 +1,5 @@
 {% extends 'base.html' %}
 
-{% block alerts %}
-    {% if form.errors %}
-        {% for field in form %}
-            {% for error in field.errors %}
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ error }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endfor %}
-    {% endif %}
-    {{ block.super }}
-{% endblock %}
-
 {% block content %}
     <h1 class="display-2 mb-5">Sign Up</h1>
     <form method="post" action="{% url 'user:registration' %}">
