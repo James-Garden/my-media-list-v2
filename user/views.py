@@ -1,4 +1,5 @@
-from .forms import SignUpForm
+from .forms import SignUpForm, EditProfileForm
+from .models import Profile
 from utils.messages import notice
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
@@ -6,8 +7,6 @@ from django.contrib.auth.views import LoginView
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
-from re import match
-from datetime import timedelta, datetime
 
 
 class LoginForm(LoginView):
@@ -22,24 +21,13 @@ def register(request):
     # When the user clicks 'submit'
     if request.method == 'POST':
         form = SignUpForm(request.POST)
-        form_valid = form.is_valid()  # form.is_valid must be run to get form.cleaned_data
-        username = form.cleaned_data.get('username')
-        birth_date = form.cleaned_data.get('birth_date')
-        valid_birth_date = datetime.now()
-        valid_birth_date = valid_birth_date.replace(year=valid_birth_date.year-13).date()
-        print(valid_birth_date)
-        if not match(r"^[A-Z][\w_]+$", str(username)):
-            notice(request, "danger", "Username must start with a capital letter and be alphanumeric.")
-        elif birth_date is None:
-            notice(request, "danger", "Invalid input.")
-        elif birth_date > valid_birth_date:
-            notice(request, "danger", "You must be at least 13 years old.")
-        elif form_valid:
+        if form.is_valid():
             user = form.save()
             user.refresh_from_db()
             user.profile.birth_date = form.cleaned_data.get('birth_date')
             user.save()
             raw_password = form.cleaned_data.get('password1')
+            username = form.cleaned_data.get('username')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
             return HttpResponseRedirect(reverse('user:profile'))
