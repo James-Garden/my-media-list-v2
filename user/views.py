@@ -1,10 +1,10 @@
+from urllib.parse import urlencode
 from .forms import SignUpForm, EditProfileForm
 from .models import User
 from utils.messages import notice
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import LoginView
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 
 
@@ -16,7 +16,7 @@ class LoginForm(LoginView):
 def register(request):
     if request.user.is_authenticated:
         notice(request, 'warning', 'Already logged in.')
-        return HttpResponseRedirect(reverse('user:profile'))
+        return redirect(reverse('user:profile'))
     # When the user clicks 'submit'
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -26,7 +26,7 @@ def register(request):
             username = form.cleaned_data.get('username')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return HttpResponseRedirect(reverse('user:profile'))
+            return redirect(reverse('user:profile'))
     # Load registration page
     else:
         form = SignUpForm()
@@ -39,7 +39,7 @@ def profile(request, username=None):
             profile_user = request.user
             is_current_user = True
         else:
-            return HttpResponseRedirect(reverse('user:login'))
+            return redirect(reverse('user:login'))
     else:  # If the user has navigated to '/profile/USERNAME'
         profile_user = get_object_or_404(User, username=username)
         is_current_user = False
@@ -54,20 +54,18 @@ def edit_profile(request):
     if request.user.is_authenticated:
         current_user = request.user
     else:
-        notice(request, "danger", "You must be logged in to edit your profile!")
-        return HttpResponseRedirect(reverse('user:login'))
+        url = f"{reverse('user:login')}?{urlencode({'next': reverse('user:edit_profile')})}"
+        return redirect(url)
+
     if request.method == 'POST':
         form = EditProfileForm(request.POST, instance=current_user)
-        form.user = current_user
         if form.is_valid():
             form.save()
             notice(request, "success", "Profile updated successfully")
-            return HttpResponseRedirect(reverse("user:edit_profile"))
+            return redirect(reverse("user:edit_profile"))
     else:
         form = EditProfileForm(instance=current_user)
-        form.user = current_user
     return render(request, 'user/edit_profile.html', context={
-        'user': current_user,
         'form': form,
     })
 
