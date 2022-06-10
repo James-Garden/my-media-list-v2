@@ -1,4 +1,4 @@
-from urllib.parse import urlencode
+from utils.shortcuts import redirect_next
 from .forms import SignUpForm, EditProfileForm
 from .models import User
 from utils.messages import notice
@@ -54,8 +54,7 @@ def edit_profile(request):
     if request.user.is_authenticated:
         current_user = request.user
     else:
-        url = f"{reverse('user:login')}?{urlencode({'next': reverse('user:edit_profile')})}"
-        return redirect(url)
+        return redirect_next(reverse('user:login'), reverse('user:edit_profile'))
 
     if request.method == 'POST':
         form = EditProfileForm(request.POST, instance=current_user)
