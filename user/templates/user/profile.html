@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <h1>{{ profile.username }}'s Profile</h1>
+    <h1 class="display-2">{{ profile.username }}'s Profile</h1>
     {% if is_current_user %}
         <a href="{% url 'user:edit_profile' %}">Edit Profile</a>
     {% endif %}
