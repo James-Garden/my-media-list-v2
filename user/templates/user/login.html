@@ -16,6 +16,7 @@
                 You must be logged in to do that.
             {% endif %}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         {% endif %}
         {{ block.super }}
     {% endblock %}
@@ -23,14 +24,6 @@
 
 
 {% block content %}
-
-    {% if next %}
-        {% if user.is_authenticated %}
-            <p>You do not have sufficient permissions to do that.</p>
-        {% else %}
-            <p>You must be logged in to do that.</p>
-        {% endif %}
-    {% endif %}
 
     <h1 class="display-2 mb-5">Login</h1>
 
