@@ -1,8 +1,7 @@
 from .forms import SignUpForm, EditProfileForm
-from .models import Profile
+from .models import User
 from utils.messages import notice
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
@@ -22,10 +21,7 @@ def register(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            user.refresh_from_db()
-            user.profile.birth_date = form.cleaned_data.get('birth_date')
-            user.save()
+            form.save()
             raw_password = form.cleaned_data.get('password1')
             username = form.cleaned_data.get('username')
             user = authenticate(username=username, password=raw_password)
@@ -57,19 +53,18 @@ def profile(request, username=None):
 def edit_profile(request):
     if request.user.is_authenticated:
         current_user = request.user
-        current_user_profile = current_user.profile
     else:
         notice(request, "danger", "You must be logged in to edit your profile!")
         return HttpResponseRedirect(reverse('user:login'))
     if request.method == 'POST':
-        form = EditProfileForm(request.POST, instance=current_user_profile)
+        form = EditProfileForm(request.POST, instance=current_user)
         form.user = current_user
         if form.is_valid():
-            current_user.profile = form.save()
+            form.save()
             notice(request, "success", "Profile updated successfully")
             return HttpResponseRedirect(reverse("user:edit_profile"))
     else:
-        form = EditProfileForm(instance=current_user_profile)
+        form = EditProfileForm(instance=current_user)
         form.user = current_user
     return render(request, 'user/edit_profile.html', context={
         'user': current_user,

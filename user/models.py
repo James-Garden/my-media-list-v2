@@ -1,13 +1,10 @@
 from utils.validators import validate_age
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
 
-# Create your models here.
-class Profile(models.Model):
+class User(AbstractUser):
     class BirthDatePrivacy(models.TextChoices):
         PRIVATE = 'PR', _('Private')
         PUBLIC = 'PA', _('Public')
@@ -20,8 +17,7 @@ class Profile(models.Model):
         NON_BINARY = 'N', _('Non-Binary')
         NOT_SPECIFIED = 'P', _('Not Specified')
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    birth_date = models.DateField(null=True, blank=True, validators=[validate_age])
+    birth_date = models.DateField(validators=[validate_age])
     birth_date_privacy = models.CharField(
         max_length=2,
         choices=BirthDatePrivacy.choices,
@@ -50,14 +46,3 @@ class Profile(models.Model):
 
     def get_links(self):
         return self.links.split("\n")
-
-
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()

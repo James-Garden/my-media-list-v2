@@ -34,9 +34,9 @@ else:
 # Application definition
 
 INSTALLED_APPS = [
-    'home.apps.HomeConfig',
-    'user.apps.UserConfig',
-    'media.apps.MediaConfig',
+    'home',
+    'user',
+    'media',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -149,3 +149,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/profile'
 LOGOUT_REDIRECT_URL = '/login'
+
+AUTH_USER_MODEL = 'user.User'

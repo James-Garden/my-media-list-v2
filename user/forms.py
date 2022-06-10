@@ -1,8 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 from utils.validators import validate_age, validate_username
-from .models import Profile
+from .models import User
 
 
 class SignUpForm(UserCreationForm):
@@ -27,5 +26,5 @@ class EditProfileForm(forms.ModelForm):
                 visible.field.widget.attrs['class'] = 'form-control'
 
     class Meta:
-        model = Profile
+        model = User
         fields = ['birth_date', 'birth_date_privacy', 'gender', 'avatar', 'location', 'bio', 'links']
