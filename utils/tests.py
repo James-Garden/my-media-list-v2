@@ -1,5 +1,5 @@
 from datetime import date
-from utils.validators import *
+from utils.validators import validate_age, validate_username
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
