@@ -1,0 +1,129 @@
+{% extends 'settings.html' %}
+
+{% block title %}
+    My Account
+{% endblock %}
+
+{% block content %}
+    {{ block.super }}
+    <table class="table">
+        <thead>
+            <tr class="table-dark">
+                <td class="display-6" colspan="12">My Account</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="table-secondary" colspan="12"><strong>Change Password</strong></td>
+            </tr>
+            <tr>
+                <td>
+                    <form action="{% url "user:edit_account" %}" method="post">
+                        <input type="hidden" name="form-type" value="password_form">
+                        {% csrf_token %}
+                        <table class="table">
+                            <tr>
+                                <td>
+                                    <label for="id_old_password" class="form-label">Old Password</label>
+                                </td>
+                                <td style="width: 80%">
+                                    {% if password_form.old_password.errors %}
+                                        <input id="id_old_password" class="form-control is-invalid" name="old_password" type="password">
+                                        <div class="invalid-feedback">
+                                            {% for error in password_form.old_password.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+
+                                        </div>
+                                    {% else %}
+                                        <input id="id_old_password" class="form-control" name="old_password" type="password">
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="id_new_password" class="form-label">New Password</label>
+                                </td>
+                                <td>
+                                    <input id="id_new_password" class="form-control" name="new_password1" type="password">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="id_new_password" class="form-label">Reenter New Password</label>
+                                </td>
+                                <td>
+                                    <input id="id_new_password" class="form-control" name="new_password2" type="password">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td colspan="2">
+                                    <button type="submit" class="btn btn-outline-success me-2">Submit</button>
+                                </td>
+                            </tr>
+                        </table>
+                </form>
+            </td>
+            <tr class="table-secondary">
+                <td colspan="12"><strong>Change Username</strong></td>
+            </tr>
+            <tr>
+                <td>
+                    <form action="{% url "user:edit_account" %}" method="post">
+                        <input type="hidden" name="form-type" value="username_form">
+                        {% csrf_token %}
+                        <table class="table">
+                            <tr>
+                                <td><label for="id_username">Username</label></td>
+                                <td style="width: 80%">
+                                    <input type="text" name="username" value="{{ current_user.username }}" maxlength="150" autocapitalize="none" autocomplete="username" required="" id="id_username" class="form-control">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td colspan="2">
+                                    <button type="submit" class="btn btn-outline-success me-2">Submit</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </td>
+            </tr>
+            <tr class="table-secondary">
+                <td colspan="12"><strong>Change Email</strong></td>
+            </tr>
+            <tr>
+                <td>
+                    <form action="{% url "user:edit_account" %}" method="post">
+                        <input type="hidden" name="form-type" value="email_form">
+                        {% csrf_token %}
+                        <table class="table">
+                            <tr>
+                                <td><label for="id_email">Email</label></td>
+                                <td style="width: 80%">
+                                    {% if email_form.errors %}
+                                        <input type="email" name="email" class="form-control is-invalid" value="{{ current_user.email }}" maxlength="254" id="id_email">
+                                        <div class="invalid-feedback">
+                                            {% for error in email_form.date_joined.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        <input type="email" name="email" class="form-control" value="{{ current_user.email }}" maxlength="254" id="id_email">
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td colspan="2">
+                                    <button type="submit" class="btn btn-outline-success me-2">Submit</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

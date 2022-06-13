@@ -1,3 +1,4 @@
+from django.contrib.auth.forms import PasswordChangeForm
 from utils.shortcuts import redirect_next
 from .forms import SignUpForm, EditProfileForm
 from .models import User
@@ -70,4 +71,30 @@ def edit_profile(request):
 
 
 def edit_account(request):
-    return None
+    if request.user.is_authenticated:
+        current_user = request.user
+    else:
+        return redirect_next(reverse('user:login'), reverse('user:edit_account'))
+
+    if request.method == 'POST':
+        if request.POST['form-type'] == 'password_form':
+            password_form = PasswordChangeForm(current_user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                notice(request, "success", "Password updated successfully!")
+                login(request, user)
+                return redirect(reverse("user:edit_account"))
+        elif request.POST['form-type'] == 'username_form':
+            raise NotImplementedError
+
+        elif request.POST['form-type'] == 'email_form':
+            raise NotImplementedError
+        else:
+            notice(request, 'danger', 'Invalid form type!')
+            password_form = PasswordChangeForm(current_user)
+    else:
+        password_form = PasswordChangeForm(current_user)
+
+    return render(request, 'user/edit_account.html', context={
+        'password_form': password_form,
+    })
