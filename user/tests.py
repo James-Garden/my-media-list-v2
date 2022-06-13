@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate
 from django.test import TestCase
 from django.urls import reverse
 from user.models import User
@@ -200,7 +201,8 @@ class EditProfileTests(TestCase):
     password = "swaggins"
 
     def create_valid_user(self):
-        user = User.objects.create_user(self.username, 'bbaggins@theshire.com', self.password, birth_date=date(2002, 8, 3))
+        user = User.objects.create_user(self.username, 'bbaggins@theshire.com', self.password,
+                                        birth_date=date(2002, 8, 3))
         return user
 
     def test_change_location(self):
@@ -249,3 +251,38 @@ class EditProfileTests(TestCase):
 
         self.assertContains(response, "Select a valid choice. X is not one of the available choices.")
         self.assertNotEqual(user.gender, 'X')
+
+
+class EditAccountTests(TestCase):
+    username = "TestUser"
+    password = "APassword"
+    birth_date = date(2000, 1, 1)
+
+    def create_valid_user(self):
+        user = User.objects.create_user(self.username, 'bbaggins@theshire.com', self.password,
+                                        birth_date=self.birth_date)
+        self.client.post(reverse("user:login"), {'username': self.username, 'password': self.password})
+        return user
+
+    def test_invalid_form(self):
+        self.create_valid_user()
+        response = self.client.post(reverse("user:edit_account"), {
+            'form-type': "invalid_form_type",
+        }, follow=True)
+        self.assertContains(response, "Invalid form type!")
+
+    def test_change_password(self):
+        user = self.create_valid_user()
+        new_password = "APassword1"
+        response = self.client.post(reverse("user:edit_account"), {
+            'user': user,
+            'form-type': "password_form",
+            'old_password': self.password,
+            'new_password1': new_password,
+            'new_password2': new_password,
+        }, follow=True)
+        self.assertContains(response, "Password updated successfully!")
+        user = authenticate(username=self.username, password=self.password)
+        self.assertIsNone(user)
+        user = authenticate(username=self.username, password=new_password)
+        self.assertIsNotNone(user)
