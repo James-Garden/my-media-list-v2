@@ -2,7 +2,8 @@ from django.contrib.auth import authenticate
 from django.test import TestCase
 from django.urls import reverse
 from user.models import User
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
+from user.tasks import delete_marked_accounts
 
 
 class LoginTests(TestCase):
@@ -322,3 +323,46 @@ class EditAccountTests(TestCase):
         })
         user.refresh_from_db()
         self.assertNotEqual(user.username, "Jimbo")
+
+
+class TaskTests(TestCase):
+    username = "TestUser"
+    password = "APassword"
+    birth_date = date(2000, 1, 1)
+
+    def create_valid_user(self):
+        user = User.objects.create_user(self.username, 'bbaggins@theshire.com', self.password,
+                                        birth_date=self.birth_date)
+        self.client.post(reverse("user:login"), {'username': self.username, 'password': self.password})
+        return user
+
+    def test_delete_none(self):
+        user = self.create_valid_user()
+        delete_marked_accounts()
+        User.objects.get(pk=user.pk)
+
+    def test_delete_marked_account(self):
+        user = self.create_valid_user()
+        user.marked_for_deletion = True
+        user.deletion_date = date.today()
+        user.save()
+        delete_marked_accounts()
+        with self.assertRaises(User.DoesNotExist):
+            User.objects.get(pk=user.pk)
+
+    def test_delete_missed_marked_account(self):
+        user = self.create_valid_user()
+        user.marked_for_deletion = True
+        user.deletion_date = date.today() + timedelta(days=-1)
+        user.save()
+        delete_marked_accounts()
+        with self.assertRaises(User.DoesNotExist):
+            User.objects.get(pk=user.pk)
+
+    def test_dont_delete_future_marked_account(self):
+        user = self.create_valid_user()
+        user.marked_for_deletion = True
+        user.deletion_date = date.today() + timedelta(days=1)
+        user.save()
+        delete_marked_accounts()
+        User.objects.get(pk=user.pk)
