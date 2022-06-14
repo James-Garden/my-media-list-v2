@@ -135,10 +135,16 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
-                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#accountDeletionModal">
-                        Delete Account
-                    </button>
+                <td>
+                    {% if marked_for_deletion %}
+                        <button type="button" class="btn btn-outline-warning">
+                            Cancel Account Deletion
+                        </button>
+                    {% else %}
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#accountDeletionModal">
+                            Delete Account
+                        </button>
+                    {% endif %}
                 </td>
             </tr>
         </tbody>

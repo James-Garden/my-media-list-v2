@@ -1,8 +1,8 @@
 from datetime import date, timedelta
 from django.contrib.auth.forms import PasswordChangeForm
 from utils.shortcuts import redirect_next
-from .forms import SignUpForm, EditProfileForm
-from .models import User
+from user.forms import SignUpForm, EditProfileForm
+from user.models import User
 from utils.messages import notice
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import LoginView
@@ -98,6 +98,7 @@ def edit_account(request):
 
     return render(request, 'user/edit_account.html', context={
         'password_form': password_form,
+        'marked_for_deletion': current_user.marked_for_deletion
     })
 
 
@@ -108,14 +109,16 @@ def delete_account(request):
         return redirect_next(reverse('user:login'), reverse('user:edit_account'))
 
     if request.method == 'GET':
-        return redirect(reverse('user:login'))
+        if current_user.marked_for_deletion:
+            return render(request, 'user/deletion_confirmation.html', context={
+                'deletion_date': current_user.deletion_date.strftime("%d %B %Y")
+            })
+        else:
+            return redirect(reverse("user:edit_account"))
 
     deletion_date = date.today() + timedelta(days=7)
     current_user.deletion_date = deletion_date
     current_user.marked_for_deletion = True
     current_user.save()
-    print(current_user.marked_for_deletion)
 
-    return render(request, 'user/deletion_confirmation.html', context={
-        'deletion_date': deletion_date.strftime("%d %B %Y")
-    })
+    return redirect(reverse("user:delete_account"))
