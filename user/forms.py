@@ -23,3 +23,21 @@ class EditProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['birth_date', 'birth_date_privacy', 'gender', 'avatar', 'location', 'bio', 'links']
+
+
+class UsernameChangeForm(forms.ModelForm):
+    username = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'autocomplete': 'off',
+    }))
+
+    class Meta:
+        model = User
+        fields = ['username']
+
+
+class EmailChangeForm(forms.ModelForm):
+    email = forms.CharField(widget=forms.TextInput(attrs={
+       'class': 'form-control',
+       'type': 'email'
+    }))

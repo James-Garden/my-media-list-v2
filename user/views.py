@@ -4,7 +4,7 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from utils.shortcuts import redirect_next
-from user.forms import SignUpForm, EditProfileForm
+from user.forms import SignUpForm, EditProfileForm, UsernameChangeForm
 from user.models import User
 from utils.messages import notice
 
@@ -39,6 +39,9 @@ def profile(request, username=None):
         if request.user.is_authenticated:  # If the user is looking at their own profile
             profile_user = request.user
             is_current_user = True
+            if request.user.marked_for_deletion:
+                notice(request, "warning",
+                       f"Your account will be deleted on {request.user.deletion_date.strftime('%d %B %Y')}.")
         else:
             return redirect(reverse('user:login'))
     else:  # If the user has navigated to '/profile/USERNAME'
@@ -76,6 +79,9 @@ def edit_account(request):
     else:
         return redirect_next(reverse('user:login'), reverse('user:edit_account'))
 
+    password_form = PasswordChangeForm(current_user)
+    username_form = UsernameChangeForm(instance=current_user)
+
     if request.method == 'POST':
         if request.POST['form-type'] == 'password_form':
             password_form = PasswordChangeForm(current_user, request.POST)
@@ -85,18 +91,21 @@ def edit_account(request):
                 login(request, user)
                 return redirect(reverse("user:edit_account"))
         elif request.POST['form-type'] == 'username_form':
-            raise NotImplementedError
+            username_form = UsernameChangeForm(request.POST, instance=current_user)
+            if username_form.is_valid():
+                user = username_form.save()
+                notice(request, "success", "Username updated successfully!")
+                login(request, user)
+                return redirect(reverse("user:edit_account"))
 
         elif request.POST['form-type'] == 'email_form':
             raise NotImplementedError
         else:
             notice(request, 'danger', 'Invalid form type!')
-            password_form = PasswordChangeForm(current_user)
-    else:
-        password_form = PasswordChangeForm(current_user)
 
     return render(request, 'user/edit_account.html', context={
         'password_form': password_form,
+        'username_form': username_form,
         'marked_for_deletion': current_user.marked_for_deletion,
     })
 
