@@ -13,6 +13,7 @@
             </tr>
         </thead>
         <tbody>
+            {# Change password section #}
             <tr>
                 <td class="table-secondary" colspan="12"><strong>Change Password</strong></td>
             </tr>
@@ -63,8 +64,10 @@
                                 </td>
                             </tr>
                         </table>
-                </form>
-            </td>
+                    </form>
+                </td>
+            </tr>
+            {# Change username section #}
             <tr class="table-secondary">
                 <td colspan="12"><strong>Change Username</strong></td>
             </tr>
@@ -90,6 +93,7 @@
                     </form>
                 </td>
             </tr>
+            {# Email change section #}
             <tr class="table-secondary">
                 <td colspan="12"><strong>Change Email</strong></td>
             </tr>
@@ -103,14 +107,14 @@
                                 <td><label for="id_email">Email</label></td>
                                 <td style="width: 80%">
                                     {% if email_form.errors %}
-                                        <input type="email" name="email" class="form-control is-invalid" value="{{ current_user.email }}" maxlength="254" id="id_email">
+                                        <input type="email" name="email" class="form-control is-invalid" value="{{ current_user.email }}" maxlength="255" id="id_email">
                                         <div class="invalid-feedback">
                                             {% for error in email_form.date_joined.errors %}
                                                 {{ error }}
                                             {% endfor %}
                                         </div>
                                     {% else %}
-                                        <input type="email" name="email" class="form-control" value="{{ current_user.email }}" maxlength="254" id="id_email">
+                                        <input type="email" name="email" class="form-control" value="{{ current_user.email }}" maxlength="255" id="id_email">
                                     {% endif %}
                                 </td>
                             </tr>
@@ -124,6 +128,40 @@
                     </form>
                 </td>
             </tr>
+            {# Account deletion section #}
+            <tr class="table-secondary">
+                <td colspan="12">
+                    <strong>Delete Account</strong>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#accountDeletionModal">
+                        Delete Account
+                    </button>
+                </td>
+            </tr>
         </tbody>
     </table>
+    {#  Modal for account deletion  #}
+    <div class="modal fade" id="accountDeletionModal" tabindex="-1" aria-labelledby="accountDeletionModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="accountDeletionModalLabel">Account Deletion Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Info TBD</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline-primary" data-bs-dismiss="modal">Take Me Back!</button>
+                    <form action="{% url "user:delete_account" %}" method="post">
+                        {% csrf_token %}
+                        <button class="btn btn-danger" type="submit">I Understand, Delete My Account</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

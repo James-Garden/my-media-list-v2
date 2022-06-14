@@ -1,3 +1,4 @@
+from datetime import date, timedelta
 from django.contrib.auth.forms import PasswordChangeForm
 from utils.shortcuts import redirect_next
 from .forms import SignUpForm, EditProfileForm
@@ -97,4 +98,24 @@ def edit_account(request):
 
     return render(request, 'user/edit_account.html', context={
         'password_form': password_form,
+    })
+
+
+def delete_account(request):
+    if request.user.is_authenticated:
+        current_user = request.user
+    else:
+        return redirect_next(reverse('user:login'), reverse('user:edit_account'))
+
+    if request.method == 'GET':
+        return redirect(reverse('user:login'))
+
+    deletion_date = date.today() + timedelta(days=7)
+    current_user.deletion_date = deletion_date
+    current_user.marked_for_deletion = True
+    current_user.save()
+    print(current_user.marked_for_deletion)
+
+    return render(request, 'user/deletion_confirmation.html', context={
+        'deletion_date': deletion_date.strftime("%d %B %Y")
     })
