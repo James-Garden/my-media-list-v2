@@ -324,6 +324,24 @@ class EditAccountTests(TestCase):
         user.refresh_from_db()
         self.assertNotEqual(user.username, "Jimbo")
 
+    def test_change_email(self):
+        user = self.create_valid_user()
+        self.client.post(reverse("user:edit_account"), {
+            "form-type": "email_form",
+            "email": "test@test.com"
+        })
+        user.refresh_from_db()
+        self.assertEqual(user.email, "test@test.com")
+
+    def test_invalid_email(self):
+        user = self.create_valid_user()
+        self.client.post(reverse("user:edit_account"), {
+            "form-type": "email_form",
+            "email": "A"
+        })
+        user.refresh_from_db()
+        self.assertNotEqual(user.username, "A")
+
 
 class TaskTests(TestCase):
     username = "TestUser"
