@@ -294,3 +294,13 @@ class EditAccountTests(TestCase):
         user.refresh_from_db()
         self.assertTrue(user.marked_for_deletion)
         self.assertContains(response, "Account Deletion Request Received")
+
+    def test_cancel_deletion(self):
+        user = self.create_valid_user()
+        self.client.post(reverse("user:delete_account"))
+        user.refresh_from_db()
+        self.assertTrue(user.marked_for_deletion)
+        response = self.client.post(reverse("user:delete_account"), {}, follow=True)
+        user.refresh_from_db()
+        self.assertFalse(user.marked_for_deletion)
+        self.assertContains(response, "Your account will no longer be deleted!")
