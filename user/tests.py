@@ -304,3 +304,21 @@ class EditAccountTests(TestCase):
         user.refresh_from_db()
         self.assertFalse(user.marked_for_deletion)
         self.assertContains(response, "Your account will no longer be deleted!")
+
+    def test_change_username(self):
+        user = self.create_valid_user()
+        self.client.post(reverse("user:edit_account"), {
+            "form-type": "username_form",
+            "username": "Jimbo"
+        })
+        user.refresh_from_db()
+        self.assertEqual(user.username, "Jimbo")
+
+    def test_invalid_username(self):
+        user = self.create_valid_user()
+        self.client.post(reverse("user:edit_account"), {
+            "form-type": "username_form",
+            "username": "A"
+        })
+        user.refresh_from_db()
+        self.assertNotEqual(user.username, "Jimbo")
