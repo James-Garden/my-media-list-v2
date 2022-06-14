@@ -44,6 +44,8 @@ class User(AbstractUser):
     location = models.CharField(null=True, blank=True, max_length=200)
     bio = models.TextField(null=True, blank=True)
     links = models.TextField(null=True, blank=True)
+    marked_for_deletion = models.BooleanField(default=False)
+    deletion_date = models.DateField(null=True, blank=True)
 
     def get_dob(self):
         if self.birth_date_privacy == self.BirthDatePrivacy.PRIVATE:
