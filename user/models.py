@@ -1,4 +1,4 @@
-from utils.validators import validate_age
+from utils.validators import validate_age, validate_username
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -17,6 +17,18 @@ class User(AbstractUser):
         NON_BINARY = 'N', _('Non-Binary')
         NOT_SPECIFIED = 'P', _('Not Specified')
 
+    username = models.CharField(
+        _("username"),
+        max_length=20,
+        unique=True,
+        help_text=_(
+            "Required. 2 to 20 characters. Must start with a capital letter, and only contain letters, digits and _"
+        ),
+        validators=[validate_username],
+        error_messages={
+            "unique": _("That username is taken.")
+        }
+    )
     birth_date = models.DateField(validators=[validate_age])
     birth_date_privacy = models.CharField(
         max_length=2,
