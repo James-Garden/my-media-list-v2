@@ -286,3 +286,11 @@ class EditAccountTests(TestCase):
         self.assertIsNone(user)
         user = authenticate(username=self.username, password=new_password)
         self.assertIsNotNone(user)
+
+    def test_delete_account(self):
+        user = self.create_valid_user()
+        self.assertFalse(user.marked_for_deletion)
+        response = self.client.post(reverse("user:delete_account"), {}, follow=True)
+        user.refresh_from_db()
+        self.assertTrue(user.marked_for_deletion)
+        self.assertContains(response, "Account Deletion Request Received")
