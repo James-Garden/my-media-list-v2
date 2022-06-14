@@ -41,3 +41,7 @@ class EmailChangeForm(forms.ModelForm):
        'class': 'form-control',
        'type': 'email'
     }))
+
+    class Meta:
+        model = User
+        fields = ['email']

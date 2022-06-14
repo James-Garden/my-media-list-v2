@@ -106,16 +106,7 @@
                             <tr>
                                 <td><label for="id_email">Email</label></td>
                                 <td style="width: 80%">
-                                    {% if email_form.errors %}
-                                        <input type="email" name="email" class="form-control is-invalid" value="{{ current_user.email }}" maxlength="255" id="id_email">
-                                        <div class="invalid-feedback">
-                                            {% for error in email_form.date_joined.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% else %}
-                                        <input type="email" name="email" class="form-control" value="{{ current_user.email }}" maxlength="255" id="id_email">
-                                    {% endif %}
+                                    {{ email_form.email }}
                                 </td>
                             </tr>
                             <tr>

@@ -4,7 +4,7 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from utils.shortcuts import redirect_next
-from user.forms import SignUpForm, EditProfileForm, UsernameChangeForm
+from user.forms import SignUpForm, EditProfileForm, UsernameChangeForm, EmailChangeForm
 from user.models import User
 from utils.messages import notice
 
@@ -81,6 +81,7 @@ def edit_account(request):
 
     password_form = PasswordChangeForm(current_user)
     username_form = UsernameChangeForm(instance=current_user)
+    email_form = EmailChangeForm(instance=current_user)
 
     if request.method == 'POST':
         if request.POST['form-type'] == 'password_form':
@@ -97,15 +98,20 @@ def edit_account(request):
                 notice(request, "success", "Username updated successfully!")
                 login(request, user)
                 return redirect(reverse("user:edit_account"))
-
         elif request.POST['form-type'] == 'email_form':
-            raise NotImplementedError
+            email_form = EmailChangeForm(request.POST, instance=current_user)
+            if email_form.is_valid():
+                user = email_form.save()
+                notice(request, "success", "Email updated successfully!")
+                login(request, user)
+                return redirect(reverse("user:edit_account"))
         else:
             notice(request, 'danger', 'Invalid form type!')
 
     return render(request, 'user/edit_account.html', context={
         'password_form': password_form,
         'username_form': username_form,
+        'email_form': email_form,
         'marked_for_deletion': current_user.marked_for_deletion,
     })
 
