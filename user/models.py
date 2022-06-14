@@ -1,3 +1,4 @@
+from datetime import date, timedelta
 from utils.validators import validate_age, validate_username
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -60,3 +61,13 @@ class User(AbstractUser):
 
     def get_links(self):
         return self.links.split("\n")
+
+    def schedule_deletion(self):
+        self.deletion_date = date.today() + timedelta(days=7)
+        self.marked_for_deletion = True
+        self.save()
+
+    def cancel_deletion(self):
+        self.deletion_date = None
+        self.marked_for_deletion = False
+        self.save()

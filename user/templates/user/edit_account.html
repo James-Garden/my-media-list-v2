@@ -137,9 +137,12 @@
             <tr>
                 <td>
                     {% if marked_for_deletion %}
-                        <button type="button" class="btn btn-outline-warning">
-                            Cancel Account Deletion
-                        </button>
+                        <form action="{% url "user:delete_account" %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-warning">
+                                Cancel Account Deletion
+                            </button>
+                        </form>
                     {% else %}
                         <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#accountDeletionModal">
                             Delete Account

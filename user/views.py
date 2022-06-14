@@ -1,13 +1,12 @@
-from datetime import date, timedelta
 from django.contrib.auth.forms import PasswordChangeForm
-from utils.shortcuts import redirect_next
-from user.forms import SignUpForm, EditProfileForm
-from user.models import User
-from utils.messages import notice
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
+from utils.shortcuts import redirect_next
+from user.forms import SignUpForm, EditProfileForm
+from user.models import User
+from utils.messages import notice
 
 
 class LoginForm(LoginView):
@@ -98,7 +97,7 @@ def edit_account(request):
 
     return render(request, 'user/edit_account.html', context={
         'password_form': password_form,
-        'marked_for_deletion': current_user.marked_for_deletion
+        'marked_for_deletion': current_user.marked_for_deletion,
     })
 
 
@@ -116,9 +115,10 @@ def delete_account(request):
         else:
             return redirect(reverse("user:edit_account"))
 
-    deletion_date = date.today() + timedelta(days=7)
-    current_user.deletion_date = deletion_date
-    current_user.marked_for_deletion = True
-    current_user.save()
+    if not current_user.marked_for_deletion:
+        current_user.schedule_deletion()
+    else:
+        current_user.cancel_deletion()
+        notice(request, "success", "Your account will no longer be deleted!")
 
     return redirect(reverse("user:delete_account"))
