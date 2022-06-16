@@ -4,7 +4,7 @@
 
 {% block content %}
     {{ block.super }}
-    <form action="{% url "user:edit_profile" %}" method="post">
+    <form action="{% url "user:edit_profile" %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <table class="table">
             <thead>

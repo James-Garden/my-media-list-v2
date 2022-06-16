@@ -61,7 +61,7 @@ def edit_profile(request):
         return redirect_next(reverse('user:login'), reverse('user:edit_profile'))
 
     if request.method == 'POST':
-        form = EditProfileForm(request.POST, instance=current_user)
+        form = EditProfileForm(request.POST, request.FILES, instance=current_user)
         if form.is_valid():
             form.save()
             notice(request, "success", "Profile updated successfully")

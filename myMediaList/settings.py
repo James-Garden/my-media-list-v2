@@ -156,3 +156,6 @@ AUTH_USER_MODEL = 'user.User'
 CRONJOBS = [
     ('0 0 * * *', 'user.tasks.delete_marked_accounts')
 ]
+
+MEDIA_ROOT = BASE_DIR / 'user_assets'
+MEDIA_URL = 'media/'
