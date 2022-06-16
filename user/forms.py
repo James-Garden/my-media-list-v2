@@ -31,7 +31,6 @@ class EditProfileForm(forms.ModelForm):
         avatar = self.cleaned_data.get('avatar')
         if avatar:
             w, h = get_image_dimensions(avatar)
-            print(w, h)
             if avatar.size > 2*1024*1024:
                 raise ValidationError("Image file too large, maximum size 2MB!")
             elif w > 225 or h > 350:
