@@ -1,5 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ValidationError
+from django.core.files.images import get_image_dimensions
+
 from .models import User
 
 
@@ -23,6 +26,19 @@ class EditProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['birth_date', 'birth_date_privacy', 'gender', 'avatar', 'location', 'bio', 'links']
+
+    def clean_avatar(self):
+        avatar = self.cleaned_data.get('avatar')
+        if avatar:
+            w, h = get_image_dimensions(avatar)
+            print(w, h)
+            if avatar.size > 2*1024*1024:
+                raise ValidationError("Image file too large, maximum size 2MB!")
+            elif w > 225 or h > 350:
+                raise ValidationError("Image dimensions too large, maximum size 225x350 (WxH)!")
+            return avatar
+        else:
+            raise ValidationError("Unable to read uploaded image, please check format and try again.")
 
 
 class UsernameChangeForm(forms.ModelForm):
