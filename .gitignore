@@ -1,3 +1,7 @@
+# Static Files #
+user_assets/
+assets/
+
 # Django #
 *.log
 *.pot
