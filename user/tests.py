@@ -384,3 +384,12 @@ class TaskTests(TestCase):
         user.save()
         call_command('deleteusers')
         User.objects.get(pk=user.pk)
+
+    def test_force_delete_marked_account(self):
+        user = self.create_valid_user()
+        user.marked_for_deletion = True
+        user.save()
+        call_command('deleteusers', force=True)
+        with self.assertRaises(User.DoesNotExist):
+            User.objects.get(pk=user.pk)
+
