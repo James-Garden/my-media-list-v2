@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'home',
     'user',
     'media',
-    'django_crontab',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -152,10 +151,6 @@ LOGIN_REDIRECT_URL = '/profile'
 LOGOUT_REDIRECT_URL = '/login'
 
 AUTH_USER_MODEL = 'user.User'
-
-CRONJOBS = [
-    ('0 0 * * *', 'user.tasks.delete_marked_accounts')
-]
 
 MEDIA_ROOT = BASE_DIR / 'user_assets'
 MEDIA_URL = 'media/'
