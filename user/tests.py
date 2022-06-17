@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.urls import reverse
 from user.models import User
 from datetime import datetime, date, timedelta
-from user.tasks import delete_marked_accounts
+from django.core.management import call_command
 
 
 class LoginTests(TestCase):
@@ -356,7 +356,7 @@ class TaskTests(TestCase):
 
     def test_delete_none(self):
         user = self.create_valid_user()
-        delete_marked_accounts()
+        call_command('deleteusers')
         User.objects.get(pk=user.pk)
 
     def test_delete_marked_account(self):
@@ -364,7 +364,7 @@ class TaskTests(TestCase):
         user.marked_for_deletion = True
         user.deletion_date = date.today()
         user.save()
-        delete_marked_accounts()
+        call_command('deleteusers')
         with self.assertRaises(User.DoesNotExist):
             User.objects.get(pk=user.pk)
 
@@ -373,7 +373,7 @@ class TaskTests(TestCase):
         user.marked_for_deletion = True
         user.deletion_date = date.today() + timedelta(days=-1)
         user.save()
-        delete_marked_accounts()
+        call_command('deleteusers')
         with self.assertRaises(User.DoesNotExist):
             User.objects.get(pk=user.pk)
 
@@ -382,5 +382,5 @@ class TaskTests(TestCase):
         user.marked_for_deletion = True
         user.deletion_date = date.today() + timedelta(days=1)
         user.save()
-        delete_marked_accounts()
+        call_command('deleteusers')
         User.objects.get(pk=user.pk)
