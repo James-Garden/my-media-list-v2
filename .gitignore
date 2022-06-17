@@ -1,5 +1,6 @@
 # Static Files #
-user_assets/
+user_assets/avatars/*
+!user_assets/avatars/default.jpg
 assets/
 
 # Django #
