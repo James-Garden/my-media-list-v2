@@ -41,8 +41,8 @@ class User(AbstractUser):
         choices=Gender.choices,
         default=Gender.NOT_SPECIFIED
     )
-    avatar = models.ImageField(null=True, blank=True, upload_to='avatars')
-    location = models.CharField(null=True, blank=True, max_length=200)
+    avatar = models.ImageField(upload_to='avatars', default='avatars/default.jpg')
+    location = models.CharField(null=True, blank=True, max_length=100)
     bio = models.TextField(null=True, blank=True)
     links = models.TextField(null=True, blank=True)
     marked_for_deletion = models.BooleanField(default=False)
