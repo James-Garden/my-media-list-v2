@@ -9,6 +9,12 @@ from user.models import User
 from utils.messages import notice
 
 
+NAV_LINKS = {
+    '/edit_profile': 'Profile',
+    '/edit_account': 'Account',
+}
+
+
 class LoginForm(LoginView):
     template_name = 'user/login.html'
     next_page = 'user/profile.html'
@@ -68,8 +74,11 @@ def edit_profile(request):
             return redirect(reverse("user:edit_profile"))
     else:
         form = EditProfileForm(instance=current_user)
+
     return render(request, 'user/edit_profile.html', context={
         'form': form,
+        'settings_nav_links': NAV_LINKS,
+        'path': request.path,
     })
 
 
@@ -113,6 +122,8 @@ def edit_account(request):
         'username_form': username_form,
         'email_form': email_form,
         'marked_for_deletion': current_user.marked_for_deletion,
+        'settings_nav_links': NAV_LINKS,
+        'path': request.path,
     })
 
 
