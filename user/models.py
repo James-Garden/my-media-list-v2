@@ -49,6 +49,7 @@ class User(AbstractUser):
     marked_for_deletion = models.BooleanField(default=False)
     deletion_date = models.DateField(null=True, blank=True)
     last_online = models.DateTimeField(default=now)
+    friends = models.ManyToManyField("User", blank=True)
 
     def get_dob(self):
         if self.birth_date_privacy == self.BirthDatePrivacy.PRIVATE:
@@ -110,3 +111,20 @@ class User(AbstractUser):
         self.deletion_date = None
         self.marked_for_deletion = False
         self.save()
+
+    def unfriend(self, friend: 'User'):
+        self.friends.remove(friend)
+        friend.friends.remove(self)
+
+
+class FriendRequest(models.Model):
+    from_user = models.ForeignKey(User, related_name='from_user', on_delete=models.CASCADE)
+    to_user = models.ForeignKey(User, related_name='to_user', on_delete=models.CASCADE)
+
+    def accept(self) -> None:
+        self.from_user.friends.add(self.to_user)  # Add recipient to senders friends
+        self.to_user.friends.add(self.from_user)  # Add sender to recipients friends
+        self.delete()  # Delete the request
+
+    def deny(self) -> None:
+        self.delete()  # Delete the request
