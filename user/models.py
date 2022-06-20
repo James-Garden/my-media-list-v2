@@ -3,6 +3,7 @@ from utils.validators import validate_age, validate_username
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.utils.timezone import now
 
 
 class User(AbstractUser):
@@ -47,27 +48,65 @@ class User(AbstractUser):
     links = models.TextField(null=True, blank=True)
     marked_for_deletion = models.BooleanField(default=False)
     deletion_date = models.DateField(null=True, blank=True)
+    last_online = models.DateTimeField(default=now)
 
     def get_dob(self):
         if self.birth_date_privacy == self.BirthDatePrivacy.PRIVATE:
             return False
         elif self.birth_date_privacy == self.BirthDatePrivacy.PUBLIC:
-            return self.birth_date.strftime("%d %b %Y")
+            return self.birth_date.strftime("%d %b, %Y")
         elif self.birth_date_privacy == self.BirthDatePrivacy.PUBLIC_YEAR_ONLY:
             return self.birth_date.strftime("%Y")
         elif self.birth_date_privacy == self.BirthDatePrivacy.PUBLIC_YEAR_MONTH:
             return self.birth_date.strftime("%b %Y")
         raise TypeError("Invalid Privacy Setting!")
 
-    def get_links(self):
+    def get_links(self) -> [str]:
         return self.links.split("\n")
 
-    def schedule_deletion(self):
+    def get_last_online(self) -> str:
+        delta = now() - self.last_online
+        if delta.days == 0:
+            if delta.seconds < 300:
+                return "Now"
+            elif delta.seconds < 3600:
+                return f"{delta.seconds // 60} minutes ago"
+            elif delta.seconds < 7200:
+                return "1 hour ago"
+            else:
+                return f"{delta.seconds // 3600} hours ago"
+        else:
+            if delta.days == 1:
+                return "Yesterday"
+            elif delta.days < 7:
+                return f"{delta.days} days ago"
+            elif delta.days == 7:
+                return "Last week"
+            elif delta.days < 30:
+                return f"{delta.days} weeks ago"
+            elif delta.days < 365:
+                return f"{delta.days // 30} months ago"
+            elif delta.days < 730:
+                return "Last year"
+            else:
+                return f"{delta.days // 365} years ago"
+
+    def get_date_joined(self) -> str:
+        return self.date_joined.strftime("%d %b, %Y")
+
+    def get_gender(self):
+        if self.gender == 'P':
+            return None
+        for pair in self.Gender.choices:
+            if pair[0] == self.gender:
+                return pair[1]
+
+    def schedule_deletion(self) -> None:
         self.deletion_date = date.today() + timedelta(days=7)
         self.marked_for_deletion = True
         self.save()
 
-    def cancel_deletion(self):
+    def cancel_deletion(self) -> None:
         self.deletion_date = None
         self.marked_for_deletion = False
         self.save()

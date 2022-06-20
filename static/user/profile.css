@@ -1,0 +1,52 @@
+.profile-wrapper {
+    display: flex;
+}
+
+.profile-left {
+    /*background-color: green;*/
+    flex-basis: 350px;
+}
+
+.profile-main {
+    /*background-color: purple;*/
+    flex-grow: 1;
+}
+
+div.avatar {
+    width: 100%;
+    /*background-color: aliceblue;*/
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.user-status {
+    display: flex;
+}
+
+.user-status-name {
+    flex-grow: 1;
+}
+
+.user-button-row {
+    display: flex;
+    width: 100%;
+}
+
+.list-button {
+    margin: auto;
+    flex-basis: 32%;
+}
+
+.list-button:first-child {
+    margin-left: 0;
+}
+
+.list-button:last-child {
+    margin-right: 0;
+}
+
+.add-friend-btn {
+    flex-basis: 80%;
+    flex-grow: 1;
+}

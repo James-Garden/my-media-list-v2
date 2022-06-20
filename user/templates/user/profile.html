@@ -1,13 +1,78 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %} {{ profile.username }}'s Profile {% endblock %}
 
+{% block extra-head %}
+    <link rel="stylesheet" href="{% static "user/profile.css" %}">
+{% endblock %}
+
 {% block content %}
 
-    <h1 class="display-2">{{ profile.username }}'s Profile</h1>
-    {% if is_current_user %}
-        <a href="{% url 'user:edit_profile' %}">Edit Profile</a>
-        <img src="{{ profile.avatar.url }}" alt="Error: Avatar not found">
-    {% endif %}
+    <h1 class="display-2 mb-5">{{ profile.username }}'s Profile</h1>
+    <div class="profile-wrapper">
+        <div class="profile-left p-2 me-5">
+            <div class="avatar list-group-item rounded">
+                <img class="avatar" src="{{ profile.avatar.url }}" alt="Avatar">
+            </div>
+            <div class="user-info">
+                <ul class="list-group">
+                    <li class="list-group-item user-status">
+                        <div class="user-status-name">Last Online</div>
+                        <div class="user-status-value">
+                            {% if profile.get_last_online == "Now" %}
+                                <span style="color:green">Now</span>
+                            {% else %}
+                                <span>{{ profile.get_last_online }}</span>
+                            {% endif %}
+                        </div>
+                    </li>
+                    <li class="list-group-item user-status">
+                        <div class="user-status-name">Date Joined</div>
+                        <div class="user-status-value">{{ profile.get_date_joined }}</div>
+                    </li>
+                    {% if profile.get_dob %}
+                    <li class="list-group-item user-status">
+                        <div class="user-status-name">Birthday</div>
+                        <div class="user-status-value">{{ profile.get_dob }}</div>
+                    </li>
+                    {% endif %}
+                    {% if profile.get_gender %}
+                    <li class="list-group-item user-status">
+                        <div class="user-status-name">Gender</div>
+                        <div class="user-status-value">{{ profile.get_gender }}</div>
+                    </li>
+                    {% endif %}
+                    {% if profile.location %}
+                    <li class="list-group-item user-status">
+                        <div class="user-status-name">Location</div>
+                        <div class="user-status-value">{{ profile.location }}</div>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="user-button-row list-group-item rounded">
+                <a class="btn btn-outline-secondary list-button" href="#"><i class="bi bi-camera-reels"></i> Films</a>
+                <a class="btn btn-outline-secondary list-button" href="#"><i class="bi bi-tv"></i> Series</a>
+                <a class="btn btn-outline-secondary list-button" href="#"><i class="bi bi-book"></i> Books</a>
+            </div>
+        {% if not is_current_user %}
+            <div class="user-button-row list-group-item rounded">
+                <a class="btn btn-outline-primary add-friend-btn" href="#"><i class="bi bi-person-plus"></i> Send Friend Request</a>
+                <button type="button" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-envelope"></i> Send Message</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-exclamation-octagon"></i> Report Profile</a></li>
+                </ul>
+            </div>
+        {% endif %}
+        </div>
+        <div class="profile-main p-2">
+            main!
+        </div>
+    </div>
 
 {% endblock %}
