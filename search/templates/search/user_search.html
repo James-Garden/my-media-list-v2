@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load search_tags %}
+
+{% block title %}
+User Search for {{ query }}
+{% endblock %}
+
+{% block content %}
+    {% if users %}
+        {% for user in users %}
+            {% show_user user %}
+        {% endfor %}
+    {% else %}
+        No results for {{ query }}
+    {% endif %}
+{% endblock %}

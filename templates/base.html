@@ -21,13 +21,14 @@
                     <li class="nav-item">
                         <label for="id_search_type" hidden></label>
                         <label for="id_search_input" hidden></label>
-                        <form action="/" method="get">
+                        <form action="{% url "search:index" %}" method="get">
                             <div class="input-group">
-                                <select id="id_search_type" class="form-select-sm btn btn-dark p-0">
+                                <select id="id_search_type" class="form-select-sm btn btn-dark p-0" name="type">
                                     <option selected value="all">All</option>
                                     <option value="books">Books</option>
                                     <option value="films">Films</option>
-                                    <option value="tv">TV Series</option>
+                                    <option value="tv">Series</option>
+                                    <option value="users">Users</option>
                                 </select>
                                 <input id="id_search_input" type="text" class="form-control bg-dark text-white border-dark" placeholder="Search..." aria-describedby="search-button-addon" name="query" style="min-width: 300px" autocomplete="off">
                                 <button type="submit" id="search-button-addon" class="btn btn-dark"><i class="bi bi-search"></i></button>

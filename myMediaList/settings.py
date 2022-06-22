@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'home',
     'user',
     'media',
+    'search',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -71,6 +72,9 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'user.context_processors.user_online_status'
             ],
+            'libraries':{
+                'search_tags': 'search.templatetags.search_tags'
+            }
         },
     },
 ]
