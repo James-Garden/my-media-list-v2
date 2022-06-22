@@ -21,9 +21,14 @@ User Search for {{ query }}
                     {% else %}
                         <li class="page-item">
                     {% endif %}
-                        <button type="submit" form="goto_previous_page" class="page-link" aria-label="Previous">
+                        <button type="submit" form="goto_prev_page" class="page-link" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </button>
+                        <form style="display: none; position: absolute" action="{% url "search:index" %}" id="goto_prev_page">
+                            <input type="hidden" name="type" value="{{ type }}">
+                            <input type="hidden" name="query" value="{{ query }}">
+                            <input type="hidden" name="page" value="{{ page|add:"-1" }}">
+                        </form>
                     </li>
                     {% for page_num in pages %}
                         {% if page_num == page %}
@@ -46,6 +51,11 @@ User Search for {{ query }}
                         <button type="submit" form="goto_next_page" class="page-link" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </button>
+                        <form style="display: none; position: absolute" action="{% url "search:index" %}" id="goto_next_page">
+                            <input type="hidden" name="type" value="{{ type }}">
+                            <input type="hidden" name="query" value="{{ query }}">
+                            <input type="hidden" name="page" value="{{ page|add:"1" }}">
+                        </form>
                     </li>
                 </ul>
             </nav>
