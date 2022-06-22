@@ -7,12 +7,50 @@ User Search for {{ query }}
 
 {% block content %}
     <div class="search-results col-md-12">
+        <h1 class="display-2 mb-5">Search Results</h1>
         {% if users %}
+            <p>Showing page {{ page }} of results</p>
             {% for user in users %}
                 {% show_user user %}
             {% endfor %}
+            <nav>
+                <p style="text-align: center">Showing {{ results_per_page }} results per page</p>
+                <ul class="pagination justify-content-center">
+                    {% if page == 1%}
+                        <li class="page-item disabled">
+                    {% else %}
+                        <li class="page-item">
+                    {% endif %}
+                        <button type="submit" form="goto_previous_page" class="page-link" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </button>
+                    </li>
+                    {% for page_num in pages %}
+                        {% if page_num == page %}
+                            <li class="page-item active">
+                        {% else %}
+                            <li class="page-item">
+                        {% endif %}
+                        <button type="submit" form="goto_page_{{ page_num }}_form" class="page-link">{{ page_num }}</button></li>
+                        <form style="display: none; position: absolute" action="{% url "search:index" %}" id="goto_page_{{ page_num }}_form">
+                            <input type="hidden" name="type" value="{{ type }}">
+                            <input type="hidden" name="query" value="{{ query }}">
+                            <input type="hidden" name="page" value="{{ page_num }}">
+                        </form>
+                    {% endfor %}
+                    {% if page == total_pages%}
+                        <li class="page-item disabled">
+                    {% else %}
+                        <li class="page-item">
+                    {% endif %}
+                        <button type="submit" form="goto_next_page" class="page-link" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
         {% else %}
-            No results for {{ query }}
+            <p>No results for '<i>{{ query }}</i>'</p>
         {% endif %}
     </div>
 {% endblock %}
