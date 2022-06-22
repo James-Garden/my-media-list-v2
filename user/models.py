@@ -116,6 +116,9 @@ class User(AbstractUser):
         self.friends.remove(friend)
         friend.friends.remove(self)
 
+    def send_friend_request(self, recipient: 'User'):
+        FriendRequest.objects.create(from_user=self, to_user=recipient)
+
 
 class FriendRequest(models.Model):
     from_user = models.ForeignKey(User, related_name='from_user', on_delete=models.CASCADE)
