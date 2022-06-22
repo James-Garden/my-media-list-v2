@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate
 from django.test import TestCase
 from django.urls import reverse
-from user.models import User
+from user.models import User, FriendRequest
 from datetime import datetime, date, timedelta
 from django.core.management import call_command
 
@@ -180,7 +180,7 @@ And this is line 2'''
         user.birth_date = date(2002, 8, 3)
         user.birth_date_privacy = "PA"
         user.save()
-        self.assertEqual(user.get_dob(), "03 Aug 2002")
+        self.assertEqual(user.get_dob(), "03 Aug, 2002")
 
     def test_get_dob_year(self):
         user = self.create_valid_user()
@@ -393,3 +393,59 @@ class TaskTests(TestCase):
         with self.assertRaises(User.DoesNotExist):
             User.objects.get(pk=user.pk)
 
+
+class FriendModelTests(TestCase):
+    username1 = "JohnSmith"
+    username2 = "JoeBloggs"
+
+    def create_user_pair(self) -> (User, User):
+        birth_date = date(2000, 1, 1)
+        user1 = User.objects.create_user(self.username1, 'test@test.com', 'APassword', birth_date=birth_date)
+        user2 = User.objects.create_user(self.username2, 'test@test.com', 'APassword', birth_date=birth_date)
+        return user1, user2
+
+    # Test removing friend using unfriend()
+    def test_unfriend(self):
+        user1, user2 = self.create_user_pair()
+        user1.friends.add(user2)
+        user2.friends.add(user1)
+        self.assertTrue(user1.friends.get(pk=user2.pk))
+        user1.unfriend(user2)
+        with self.assertRaises(User.DoesNotExist):
+            user1.friends.get(pk=user2.pk)
+        with self.assertRaises(User.DoesNotExist):
+            user2.friends.get(pk=user1.pk)
+
+    # Test sending friend request
+    def test_send_friend_request(self):
+        user1, user2 = self.create_user_pair()
+        user1.send_friend_request(user2)
+        FriendRequest.objects.get(from_user=user1, to_user=user2)
+
+    # Test accepting friend request
+    def test_accept_friend_request(self):
+        user1, user2 = self.create_user_pair()
+        user1.send_friend_request(user2)
+        request = FriendRequest.objects.get(from_user=user1, to_user=user2)
+        request.accept()
+        # Check the request deletes itself after being responded to
+        with self.assertRaises(FriendRequest.DoesNotExist):
+            FriendRequest.objects.get(from_user=user1, to_user=user2)
+        # Check that user2 is in user1's friends
+        self.assertQuerysetEqual(user1.friends.filter(), [user2])
+        # Check that user1 is in user2's friends
+        self.assertQuerysetEqual(user2.friends.filter(), [user1])
+
+    # Test denying friend request
+    def test_deny_friend_request(self):
+        user1, user2 = self.create_user_pair()
+        user1.send_friend_request(user2)
+        request = FriendRequest.objects.get(from_user=user1, to_user=user2)
+        request.deny()
+        # Check the request deletes itself after being responded to
+        with self.assertRaises(FriendRequest.DoesNotExist):
+            FriendRequest.objects.get(from_user=user1, to_user=user2)
+        # Check that user2 is not in user1's friends
+        self.assertQuerysetEqual(user1.friends.filter(), [])
+        # Check that user1 is not in user2's friends
+        self.assertQuerysetEqual(user2.friends.filter(), [])
