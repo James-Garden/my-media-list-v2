@@ -38,14 +38,14 @@ def user_search(request, query: str) -> HttpResponse:
             offset = 0
     else:
         offset = 0
-    users = User.objects.filter(username__icontains=query)[offset*results_per_page:(offset+1) * results_per_page]
+    users = User.objects.filter(username__icontains=query)[offset:offset+results_per_page]
     total_results = User.objects.filter(username__icontains=query).count()
     pages = int(total_results // results_per_page) + (total_results % results_per_page > 0)
     return render(request, 'search/user_search.html', context={
         'query': query,
         'users': users,
         'current_user': request.user,
-        'page': offset+1,
+        'page': offset // 10 + 1,
         'pages': range(1, pages+1),
         'total_pages': pages,
         'results_per_page': results_per_page,
