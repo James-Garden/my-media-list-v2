@@ -27,8 +27,9 @@ def index(request):
 
 
 def user_search(request, query: str) -> HttpResponse:
-    users = User.objects.filter(username__icontains=query)
+    users = User.objects.filter(username__icontains=query)[:10]
     return render(request, 'search/user_search.html', context={
         'query': query,
         'users': users,
+        'current_user': request.user,
     })

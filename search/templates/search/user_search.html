@@ -6,11 +6,13 @@ User Search for {{ query }}
 {% endblock %}
 
 {% block content %}
-    {% if users %}
-        {% for user in users %}
-            {% show_user user %}
-        {% endfor %}
-    {% else %}
-        No results for {{ query }}
-    {% endif %}
+    <div class="search-results col-md-12">
+        {% if users %}
+            {% for user in users %}
+                {% show_user user %}
+            {% endfor %}
+        {% else %}
+            No results for {{ query }}
+        {% endif %}
+    </div>
 {% endblock %}

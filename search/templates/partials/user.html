@@ -1,3 +1,32 @@
-<div class="search-user-result">
-    {{ user.username }}
+<div class="card mb-3 user-search-result">
+    <div class="row no-gutters">
+        <div class="col-md-2">
+            <img src="{{ user.avatar.url }}" class="card-img" alt="{{ user.username }}'s Avatar">
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{% url "user:profile" username=user.username %}" style="text-decoration: none">{{ user.username }}</a>
+                    <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item link-danger" href="#"><i class="bi bi-exclamation-octagon"></i> Report User</a></li>
+                    </ul>
+                </h5>
+                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                {% if user.get_last_online == "Now" %}
+                    <p class="card-text"><small class="text-muted">Currently online</small></p>
+                {% else %}
+                    <p class="card-text"><small class="text-muted">Last online {{ user.get_last_online }}</small></p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-2 btn-group-vertical" role="group">
+            <button type="button" class="btn btn-outline-primary"><i class="bi bi-person"></i> View Profile</button>
+            {% if is_friend == 1 %}
+                <button type="button" class="btn btn-outline-warning"><i class="bi bi-person-minus"></i> Remove Friend</button>
+            {% elif is_friend == 0 %}
+                <button type="button" class="btn btn-outline-success"><i class="bi bi-person-plus"></i> Add Friend</button>
+            {% endif %}
+        </div>
+    </div>
 </div>
