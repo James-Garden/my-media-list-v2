@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import LoginView
@@ -148,3 +149,22 @@ def delete_account(request):
         notice(request, "success", "Your account will no longer be deleted!")
 
     return redirect(reverse("user:delete_account"))
+
+
+@login_required
+def add_friend(request, username):
+    return_url = redirect(request.META.get('HTTP_REFERER', '/'))
+    try:
+        recipient = User.objects.get(username=username)
+    except User.DoesNotExist:
+        notice(request, "warning", "This user does not exist")
+        return return_url
+    if request.user.friends.filter(user=recipient).exists():
+        notice(request, "info", "You are already friends with this user!")
+        return return_url
+    if request.user.send_friend_request(recipient):
+        notice(request, "success", "Friend request sent!")
+        return return_url
+    else:
+        notice(request, "warning", "You have already sent a friend request to this user!")
+        return return_url

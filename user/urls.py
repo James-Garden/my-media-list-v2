@@ -9,6 +9,7 @@ urlpatterns = [
     path('logout', auth_views.LogoutView.as_view(), name='logout'),
     path('profile/', views.profile, name='profile'),
     path('profile/<str:username>/', views.profile, name='profile'),
+    path('add_friend/<str:username>', views.add_friend, name='add_friend'),
     path('edit_profile', views.edit_profile, name='edit_profile'),
     path('edit_account', views.edit_account, name='edit_account'),
     path('delete_account', views.delete_account, name='delete_account')
