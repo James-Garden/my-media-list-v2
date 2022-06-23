@@ -193,3 +193,12 @@ def remove_friend(request, username):
     except User.DoesNotExist:
         notice(request, "warning", "You are not friends with this user.")
     return return_url
+
+
+@login_required
+def friend_requests(request):
+    recv_requests = FriendRequest.objects.filter(to_user=request.user)
+    send_requests = FriendRequest.objects.filter(from_user=request.user)
+    return render(request, "user/friend_requests.html", context={
+
+    })
