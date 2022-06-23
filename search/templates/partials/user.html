@@ -21,11 +21,14 @@
             </div>
         </div>
         <div class="col-md-2 btn-group-vertical" role="group">
-            <button type="button" class="btn btn-outline-primary"><i class="bi bi-person"></i> View Profile</button>
+            <a href="{% url "user:profile" username=user.username %}" class="btn btn-outline-primary">
+                <p style="text-align: center"><i class="bi bi-person"></i> View Profile</p></a>
             {% if is_friend == 1 %}
-                <button type="button" class="btn btn-outline-warning"><i class="bi bi-person-minus"></i> Remove Friend</button>
+                <a href="#" class="btn btn-outline-danger"><i class="bi bi-person-dash"></i> Remove Friend</a>
             {% elif is_friend == 0 %}
-                <button type="button" class="btn btn-outline-success"><i class="bi bi-person-plus"></i> Add Friend</button>
+                <a href="{% url "user:add_friend" username=user.username %}" class="btn btn-outline-success"><i class="bi bi-person-plus"></i> Add Friend</a>
+            {% elif is_friend == 3 %}
+                <a href="{% url "user:add_friend" username=user.username %}" class="btn btn-outline-secondary"><i class="bi bi-person-x"></i> Cancel Friend Request</a>
             {% endif %}
         </div>
     </div>
