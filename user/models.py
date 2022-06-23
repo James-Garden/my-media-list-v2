@@ -117,7 +117,8 @@ class User(AbstractUser):
         friend.friends.remove(self)
 
     def send_friend_request(self, recipient: 'User'):
-        FriendRequest.objects.get_or_create(from_user=self, to_user=recipient)
+        request, created = FriendRequest.objects.get_or_create(from_user=self, to_user=recipient)
+        return created
 
 
 class FriendRequest(models.Model):
