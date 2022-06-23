@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from utils.shortcuts import redirect_next
 from user.forms import SignUpForm, EditProfileForm, UsernameChangeForm, EmailChangeForm
-from user.models import User
+from user.models import User, FriendRequest
 from utils.messages import notice
 
 
@@ -128,11 +128,9 @@ def edit_account(request):
     })
 
 
+@login_required
 def delete_account(request):
-    if request.user.is_authenticated:
-        current_user = request.user
-    else:
-        return redirect_next(reverse('user:login'), reverse('user:edit_account'))
+    current_user = request.user
 
     if request.method == 'GET':
         if current_user.marked_for_deletion:
@@ -168,3 +166,30 @@ def add_friend(request, username):
     else:
         notice(request, "warning", "You have already sent a friend request to this user!")
         return return_url
+
+
+@login_required
+def cancel_friend_request(request, username):
+    return_url = redirect(request.META.get('HTTP_REFERER', '/'))
+    try:
+        f_request = FriendRequest.objects.get(from_user=request.user, to_user=User.objects.get(username=username))
+        f_request.delete()
+        notice(request, "success", "Friend request cancelled.")
+    except FriendRequest.DoesNotExist:
+        notice(request, "warning", "There is no existing friend request to this user!")
+    except User.DoesNotExist:
+        notice(request, "warning", "This user does not exist.")
+    finally:
+        return return_url
+
+
+@login_required
+def remove_friend(request, username):
+    return_url = redirect(request.META.get('HTTP_REFERER', '/'))
+    try:
+        friend = request.user.friends.get(username=username)
+        request.user.unfriend(friend)
+        notice(request, "info", f"Removed {friend.username} from your friends list.")
+    except User.DoesNotExist:
+        notice(request, "warning", "You are not friends with this user.")
+    return return_url
